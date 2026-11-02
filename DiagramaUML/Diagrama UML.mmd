@@ -1,0 +1,117 @@
+---
+title: Cinemar - Diagrama de clases
+---
+classDiagram
+    direction LR
+
+    class Usuario {
+        +int id_usuario
+        +str nombre
+        +str apellido
+        +str correo
+        +str fecha_nacimiento
+        +bool tiene_tarjeta
+        +bool es_admin
+        +desde_fila(fila)$ Usuario
+        +nombre_completo() str
+    }
+
+    class CrearCuenta {
+        +str nombre
+        +str apellido
+        +str correo
+        +str contrasenia
+        +str repetir_contrasenia
+        +str fecha_nacimiento
+        +bool tiene_tarjeta
+        +validar_contrasenia() bool
+        +validar_correo() bool
+        +validar_fecha() bool
+        +validar() list
+        +guardar() int
+    }
+
+    class InicioSesion {
+        +str correo
+        +str contrasenia
+        +validar() Usuario
+    }
+
+    class Pelicula {
+        +int id_pelicula
+        +str nombre
+        +str sinopsis
+        +str clasificacion
+        +str genero
+        +int duracion
+        +str director
+        +str actores
+        +buscar(id_pelicula)$ Pelicula
+        +ficha() str
+    }
+
+    class Sala {
+        +int id_sala
+        +int numero
+        +str tipo
+        +float precio
+        +int filas
+        +int butacas_por_fila
+        +str horario
+        +int id_pelicula
+        +int capacidad
+        +buscar(id_sala)$ Sala
+        +butacas(fecha) list
+        +lugares_libres(fecha) int
+        +validar_datos(datos)$ str
+    }
+
+    class Butaca {
+        +str fila
+        +int numero
+        +bool reservada
+        +str codigo
+    }
+
+    class Reserva {
+        +int id_reserva
+        +int id_usuario
+        +int id_sala
+        +str fecha
+        +str butaca
+        +float precio
+        +str horario
+        +fecha_hora_funcion() datetime
+        +se_puede_modificar() bool
+        +modificar(nueva_fecha, nueva_butaca, nuevo_precio)
+        +reservar(id_usuario, id_sala, fecha, butacas, precio)$
+    }
+
+    class Descuento {
+        +int dia
+        +float porcentaje
+        +str nombre_dia
+        +del_dia(fecha)$ Descuento
+        +aplicar(precio) float
+    }
+
+    class Comprobante {
+        +str cliente
+        +Pelicula pelicula
+        +Sala sala
+        +str fecha
+        +list butacas
+        +float precio_unitario
+        +datetime fecha_de_compra
+        +float total
+        +texto() str
+    }
+
+    CrearCuenta ..> Usuario : registra
+    InicioSesion ..> Usuario : devuelve
+    Sala "0..*" --> "1" Pelicula : proyecta
+    Sala "1" *-- "1..*" Butaca : tiene
+    Usuario "1" -- "0..*" Reserva : hace
+    Reserva "0..*" --> "1" Sala : en
+    Reserva ..> Descuento : calcula precio
+    Reserva ..> Comprobante : genera
